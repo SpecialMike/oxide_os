@@ -21,6 +21,7 @@ pub mod serial;
 pub mod vga_buffer;
 pub mod time;
 pub mod acpi;
+use acpi::ACPI;
 
 extern crate alloc;
 
@@ -84,9 +85,12 @@ pub fn init(boot_info: &'static BootInfo) {
 
 	let physical_memory_offset = VirtAddr::new(boot_info.physical_memory_offset);
 
-	let rsdp = acpi::get_rsdp(physical_memory_offset);
-	let fadt = rsdp.get_fadt(physical_memory_offset);
-	let current_time = time::get_current_time(fadt.century);
+	acpi::get_rsdp(physical_memory_offset);
+	let mut century_register = 0;
+	if let Some(fadt) = *(ACPI.fadt.read()) {
+		century_register = fadt.century;
+	}
+	let current_time = time::get_current_time(century_register);
 	println!("{:?}", current_time);
 }
 
