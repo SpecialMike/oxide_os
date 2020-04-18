@@ -77,7 +77,6 @@ pub fn get_rsdp(physical_memory_offset: VirtAddr) {
 	//the RSDP is either located in the first 1KB of the EBDA, or in the memory region below 1MiB
 	//we have to search for the "RSD PTR " string (including the trailing space), which is the signature of the RSDPDescriptor struct
 	//this signature is guaranteed to be on a 16-byte boundary
-	crate::println!("getting rsdp");
 	for i in (0..0x0010_0000).step_by(16) {
 		let descriptor_ptr: *const RSDPDescriptor = (physical_memory_offset + (i as u64)).as_ptr();
 		let descriptor = unsafe{*descriptor_ptr};

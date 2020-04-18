@@ -27,32 +27,13 @@ fn panic(info: &PanicInfo) -> ! {
     oxide_os::test_panic_handler(info);
 }
 
-async fn async_number() -> u32 {
-	42
-}
-
-async fn example_task() {
-	let number = async_number().await;
-	println!("async_number:{}", number);
-}
-
 entry_point!(kernel_main);
 /// No mangle keeps the rust compiler from outputting a mangled function name
 /// extern "C" tells the rust compiler to use the C calling convention for the function, instead of Rust's
 /// The method is called _start becuase that's what the linker is looking for by convention
 #[no_mangle]
 fn kernel_main(boot_info: &'static BootInfo) -> ! {
-    use oxide_os::{allocator, memory};
-    use x86_64::VirtAddr;
-	println!("Hello World!");
-
     oxide_os::init(boot_info);
-
-    let physical_memory_offset = VirtAddr::new(boot_info.physical_memory_offset);
-    let mut mapper = unsafe { memory::init(physical_memory_offset) };
-    let mut frame_allocator =
-        unsafe { memory::init_allocator(&boot_info.memory_map) };
-	allocator::init_heap(&mut mapper, &mut frame_allocator).expect("heap initialization failed");
 
     #[cfg(test)]
 	test_main();
@@ -60,7 +41,6 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! {
 	println!("Didn't crash!");
 
 	let mut executor = Executor::new();
-	executor.spawn(Task::new(example_task()));
 	executor.spawn(Task::new(keyboard::print_keypresses()));
 	executor.run();
 }

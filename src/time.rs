@@ -1,4 +1,3 @@
-#[derive(Debug)]
 pub struct Calendar {
 	pub year: u32,
 	pub month: u32,
@@ -6,6 +5,11 @@ pub struct Calendar {
 	pub hour: u32,
 	pub minute: u32,
 	pub second: u32,
+}
+impl core::fmt::Display for Calendar {
+	fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
+		write!(f, "{}-{}-{} {:02}:{:02}:{:02}", self.year, self.month, self.day, self.hour, self.minute, self.second)
+	}
 }
 
 fn get_update_in_progress_flag() -> bool {
@@ -80,7 +84,6 @@ pub fn get_current_time(century_register: u8) -> Calendar {
 	}
 
 	if century_register != 0 {
-		crate::println!("Year: {}, Century: {}", year, century);
 		year += century * 100;
 	}
 	//get the full year, the RTC stores only the last two digits (thanks, Y2K bug)

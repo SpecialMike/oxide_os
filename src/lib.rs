@@ -90,6 +90,10 @@ pub fn init(boot_info: &'static BootInfo) {
 	x86_64::instructions::interrupts::enable();
 
 	let physical_memory_offset = VirtAddr::new(boot_info.physical_memory_offset);
+    let mut mapper = unsafe { memory::init(physical_memory_offset) };
+    let mut frame_allocator =
+        unsafe { memory::init_allocator(&boot_info.memory_map) };
+	allocator::init_heap(&mut mapper, &mut frame_allocator).expect("heap initialization failed");
 
 	acpi::get_rsdp(physical_memory_offset);
 	let mut century_register = 0;
@@ -97,7 +101,7 @@ pub fn init(boot_info: &'static BootInfo) {
 		century_register = fadt.century;
 	}
 	let current_time = time::get_current_time(century_register);
-	println!("{:?}", current_time);
+	println!("System startup at {}", current_time);
 }
 
 pub fn hlt_loop() -> ! {

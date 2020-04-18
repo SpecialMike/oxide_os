@@ -20,11 +20,7 @@ fn main(boot_info: &'static BootInfo) -> ! {
 	use x86_64::VirtAddr;
 
 	oxide_os::init(boot_info);
-	let physical_mem_offset = VirtAddr::new(boot_info.physical_memory_offset);
-	let mut mapper = unsafe { memory::init(physical_mem_offset)};
-	let mut frame_allocator =
-        unsafe { memory::init_allocator(&boot_info.memory_map) };
-	allocator::init_heap(&mut mapper, &mut frame_allocator).expect("heap initialization failed");
+
 	test_main();
 
 	loop{}
