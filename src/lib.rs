@@ -102,6 +102,8 @@ pub fn init(boot_info: &'static BootInfo) {
 	}
 	let current_time = time::get_current_time(century_register);
 	println!("System startup at {}", current_time);
+
+	println!("{}", ACPI);
 }
 
 pub fn hlt_loop() -> ! {
