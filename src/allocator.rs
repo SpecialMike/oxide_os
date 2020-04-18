@@ -1,4 +1,3 @@
-use linked_list_allocator::LockedHeap;
 use x86_64::{
     structures::paging::{
         mapper::MapToError, FrameAllocator, Mapper, Page, PageTableFlags, Size4KiB,
@@ -40,17 +39,6 @@ pub fn init_heap(
     }
 
     Ok(())
-}
-
-/// Align a given address upwards to put it into alignment
-fn align_up(addr: usize, align: usize) -> usize {
-	let remainder = addr % align;
-	if remainder == 0{
-		addr
-	}
-	else{
-		addr - remainder + align
-	}
 }
 
 // A trait wrapper around spin::Mutex

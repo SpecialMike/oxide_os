@@ -8,6 +8,7 @@
 #![feature(const_fn)]
 #![feature(alloc_layout_extra)]
 #![feature(const_in_array_repeat_expressions)]
+#![feature(wake_trait)]
 
 use bootloader::BootInfo;
 use x86_64::VirtAddr;
@@ -25,6 +26,8 @@ pub mod vga_buffer;
 pub mod time;
 pub mod acpi;
 use acpi::ACPI;
+
+pub mod task;
 
 extern crate alloc;
 

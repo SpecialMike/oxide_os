@@ -7,6 +7,9 @@
 use bootloader::{entry_point, BootInfo};
 use core::panic::PanicInfo;
 use oxide_os::println;
+use oxide_os::task::{Task, executor::Executor};
+use oxide_os::task::keyboard;
+
 extern crate alloc;
 
 /// This is called on panic. ! indicated that it is a diverging function
@@ -22,6 +25,15 @@ fn panic(info: &PanicInfo) -> ! {
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     oxide_os::test_panic_handler(info);
+}
+
+async fn async_number() -> u32 {
+	42
+}
+
+async fn example_task() {
+	let number = async_number().await;
+	println!("async_number:{}", number);
 }
 
 entry_point!(kernel_main);
@@ -43,9 +55,12 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! {
 	allocator::init_heap(&mut mapper, &mut frame_allocator).expect("heap initialization failed");
 
     #[cfg(test)]
-    test_main();
-
+	test_main();
+	
 	println!("Didn't crash!");
 
-    oxide_os::hlt_loop()
+	let mut executor = Executor::new();
+	executor.spawn(Task::new(example_task()));
+	executor.spawn(Task::new(keyboard::print_keypresses()));
+	executor.run();
 }
