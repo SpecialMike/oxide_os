@@ -21,6 +21,11 @@ impl FixedSizeBlockAllocator {
 		}
 	}
 
+	/// Initialize the allocator
+	/// 
+	/// # Safety
+	/// - The memory from `heap_start` to `heap_start` + `heap_size` must be unused
+	/// - This must only be called once!
 	pub unsafe fn init(&mut self, heap_start: usize, heap_size: usize)  {
 		self.fallback_allocator.init(heap_start, heap_size);
 	}
@@ -65,6 +70,7 @@ unsafe impl GlobalAlloc for Locked<FixedSizeBlockAllocator> {
 		}
 	}
 
+	#[allow(clippy::cast_ptr_alignment)]
 	unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
 		let mut allocator = self.lock();
 		match list_index(&layout) {
