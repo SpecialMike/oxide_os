@@ -25,6 +25,7 @@ pub mod serial;
 pub mod vga_buffer;
 pub mod time;
 pub mod acpi;
+pub mod timer;
 use acpi::ACPI;
 
 pub mod task;
@@ -104,6 +105,8 @@ pub fn init(boot_info: &'static BootInfo) {
 	println!("System startup at {}", current_time);
 
 	println!("{}", ACPI);
+
+	timer::set_interrupt_freq(100);
 }
 
 pub fn hlt_loop() -> ! {
