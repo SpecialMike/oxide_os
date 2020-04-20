@@ -9,6 +9,7 @@
 #![feature(alloc_layout_extra)]
 #![feature(const_in_array_repeat_expressions)]
 #![feature(wake_trait)]
+#![feature(core_intrinsics)]
 
 use bootloader::BootInfo;
 use x86_64::VirtAddr;
@@ -29,6 +30,7 @@ pub mod timer;
 use acpi::ACPI;
 
 pub mod task;
+pub mod pci;
 
 extern crate alloc;
 
@@ -107,6 +109,17 @@ pub fn init(boot_info: &'static BootInfo) {
 	println!("{}", ACPI);
 
 	timer::set_interrupt_freq(100);
+
+	let pci = pci::PCI::new();
+	for bus in pci.busses() {
+		for device in bus.devices() {
+			for func in device.functions() {
+				if let Some(header) = func.header() {
+					println!("{:>02X}:{:>02X}.{:>02X} {}", bus.num, device.num, func.num, header);
+				}
+			}
+		}
+	}
 }
 
 pub fn hlt_loop() -> ! {
