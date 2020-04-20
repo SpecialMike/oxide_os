@@ -89,7 +89,15 @@ impl core::fmt::Display for PCIHeader {
         for (i, base_address_register) in self.base_address_registers.iter().enumerate() {
             match PCIBar::from(*base_address_register) {
                 PCIBar::None => Ok(()),
-                PCIBar::Memory(address) => writeln!(f, "BAR[{}]:{:>08X}(memory)", i, address),
+                PCIBar::Memory((address, prefetchable)) => {
+
+					write!(f, "BAR[{}]:{:>08X}(memory", i, address)?;
+					if prefetchable {
+						write!(f, ", prefetchable)")?;
+					}
+					writeln!(f, ")")?;
+					Ok(())
+				},
                 PCIBar::Port(address) => writeln!(f, "BAR[{}]:{:>04X}(port)", i, address),
             }?;
         }
