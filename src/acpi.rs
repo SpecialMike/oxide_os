@@ -12,18 +12,18 @@ pub struct Acpi {
 }
 impl core::fmt::Display for Acpi {
 	fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-		write!(f, "ACPI table:\n")?;
+		writeln!(f, "ACPI table:")?;
 		if let Some(ptr) = *(self.rsdt.read()) {
-			write!(f, "rsdt: {:p}\n", ptr)?;
+			writeln!(f, "rsdt: {:p}", ptr)?;
 		}
 		if let Some(ptr) = *(self.fadt.read()) {
-			write!(f, "fadt: {:p}\n", ptr)?;
+			writeln!(f, "fadt: {:p}", ptr)?;
 		}
 		if let Some(ptr) = *(self.madt.read()) {
-			write!(f, "madt: {:p}\n", ptr)?;
+			writeln!(f, "madt: {:p}", ptr)?;
 		}
 		if let Some(ptr) = *(self.hpet.read()) {
-			write!(f, "hpet: {:p}\n", ptr)?;
+			writeln!(f, "hpet: {:p}", ptr)?;
 		}
 		Ok(())
 	}
